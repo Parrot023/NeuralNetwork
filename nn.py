@@ -6,11 +6,24 @@ import time
 
 # Activation function
 def sigmoid(x):
+    print(x)
     return 1 / (1 + math.exp(-x))
 
 # Function to calculate gradient when doing gradient descent
 def dsigmoid(y):
     return y * (1 - y)
+
+# Translate function
+def translate(x):
+    # Figure out how 'wide' each range is
+    leftSpan = 256 - 0
+    rightSpan = 1 - 0
+
+    # Convert the left range into a 0-1 range (float)
+    valueScaled = float(x - 0) / float(leftSpan)
+
+    # Convert the 0-1 range into a value in the right range.
+    return 0 + (valueScaled * rightSpan)
 
 class NeuralNetwork():
     """
@@ -75,37 +88,40 @@ class NeuralNetwork():
         start = int(time.time())
 
         for i in range(len(inputs)):
-            print("Training with input {}/{}".format(i, len(inputs)))
+            try:
+                print("Training with input {}/{}".format(i, len(inputs)))
 
-            # Makes a guess based on the inputs
-            guess, total_out = self.feed_forward(inputs[i])
+                # Makes a guess based on the inputs
+                guess, total_out = self.feed_forward(inputs[i])
 
-            # Looping through every layer of weights
-            for l in range(len(self.weights) - 1, -1, -1):
+                # Looping through every layer of weights
+                for l in range(len(self.weights) - 1, -1, -1):
 
-                if l == len(self.weights) - 1:
+                    if l == len(self.weights) - 1:
 
-                    error = mm.Matrix.subtract(labels[i], guess)
+                        error = mm.Matrix.subtract(labels[i], guess)
 
-                else: #DOT PRUDOCT: TRANSPOSED WEIGHT AND ERROS IS THE ERROR FOR THE NEXT LAYER
+                    else: #DOT PRUDOCT: TRANSPOSED WEIGHT AND ERROS IS THE ERROR FOR THE NEXT LAYER
 
-                    # Uses the weights of the previous layer to calculate errror of next
-                    error = mm.Matrix.dot_product(mm.Matrix.transpose(self.weights[l+1]), error)
+                        # Uses the weights of the previous layer to calculate errror of next
+                        error = mm.Matrix.dot_product(mm.Matrix.transpose(self.weights[l+1]), error)
 
-                # Calculating the gradients
-                # GRADIENT IS BASED ON OUTPUT OF WEIGHT LAYER !!!!!!!!!!!!!
-                # GIANT TODO: GET A BETTER UNDERSTANDING OF WHAT THIS MATH DOES!!!!!!!!!!!!!!!!
-                gradient = mm.Matrix.static_map(total_out[l+1], dsigmoid)
-                gradient.mult(error)
-                gradient.mult(self.lr)
+                    # Calculating the gradients
+                    # GRADIENT IS BASED ON OUTPUT OF WEIGHT LAYER !!!!!!!!!!!!!
+                    # GIANT TODO: GET A BETTER UNDERSTANDING OF WHAT THIS MATH DOES!!!!!!!!!!!!!!!!
+                    gradient = mm.Matrix.static_map(total_out[l+1], dsigmoid)
+                    gradient.mult(error)
+                    gradient.mult(self.lr)
 
-                # Calculating the changes in weights
-                delta_w = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(total_out[l]))
+                    # Calculating the changes in weights
+                    delta_w = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(total_out[l]))
 
-                self.biases[l].add(gradient)
+                    self.biases[l].add(gradient)
 
-                self.weights[l].add(delta_w)
-
+                    self.weights[l].add(delta_w)
+            except Exception as e:
+                print("error skipped training set", i)
+                print(e)
         print("Went through {} inputs in {} seconds".format(len(inputs), int(time.time()) - start))
 
     def test(self,inputs, labels):
