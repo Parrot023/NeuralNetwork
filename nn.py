@@ -2,6 +2,7 @@
 import matrix_math as mm
 import math
 import pickle
+import time
 
 # Activation function
 def sigmoid(x):
@@ -71,9 +72,10 @@ class NeuralNetwork():
         """
         Function to train the neural network using backpropagation and gradient descent
         """
+        start = int(time.time())
 
         for i in range(len(inputs)):
-            print("Training with input", i)
+            print("Training with input {}/{}".format(i, len(inputs)))
 
             # Makes a guess based on the inputs
             guess, total_out = self.feed_forward(inputs[i])
@@ -104,7 +106,27 @@ class NeuralNetwork():
 
                 self.weights[l].add(delta_w)
 
+        print("Went through {} inputs in {} seconds".format(len(inputs), int(time.time()) - start))
 
+    def test(self,inputs, labels):
+
+        wrong = 0
+        correct = 0
+
+        for i in range(len(inputs)):
+            result, data = self.feed_forward(inputs[i])
+            guess = result.values.index(max(result.values))
+            target = labels[i].values.index(max(labels[i].values))
+
+            print("Input:", i, "Target:", target, "Guess:", guess)
+
+            if guess == target:
+                correct += 1
+            else:
+                wrong += 1
+
+
+        print("score: {}/{} ({})".format(correct, correct + wrong, correct/(correct+wrong)))
 
     # Function to save the model to a pickle file
     def save(self, name):
