@@ -149,20 +149,36 @@ class Matrix():
 
         return result
 
-    def map(self, function):
+    def map(self, function, **kwargs):
 
-        self.values = [[function(c) for c in r] for r in self.values]
+        """
+        Applies a function (f) to every element in the matrix
+        if the function needs more arguments than x (the element itself) they can be given to the map function (m) as kwargs
+        the map function (m) will then pass the kwargs on to the function (f)
+
+        This function changes the matrix it is called on
+        """
+
+        self.values = [[function(c, **kwargs) for c in r] for r in self.values]
 
         # for r in range(self.rows):
         #     for c in range(self.cols):
         #         self.values[r][c] = function(c)
 
     @staticmethod
-    def static_map(m, function):
+    def static_map(m, function, **kwargs):
+
+        """
+        Applies a function (f) to every element in the matrix
+        if the function needs more arguments than x (the element itself) they can be given to the map function (m) as kwargs
+        the map function (m) will then pass the kwargs on to the function (f)
+
+        This function returns a new matrix
+        """
 
         result = Matrix(m.rows, m.cols)
 
-        result.values = [[function(c) for c in r] for r in m.values]
+        result.values = [[function(c, **kwargs) for c in r] for r in m.values]
 
         return result
 
