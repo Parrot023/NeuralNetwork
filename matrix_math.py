@@ -29,6 +29,12 @@ class Matrix():
     @staticmethod
     def dot_product(m1, m2):
 
+        """
+        Calculates the dot product between to matricies
+
+        This function returns a new matrix
+        """
+
         # This is a list comprehension version of the below for-loop nightmare. i have chosen to keep the for loops as comment for easier understanding
         # This madness loops over every row in this matrix makes a list then loops over every col in the other matrix where every index is the sum of a third list
         # The third list is a list containing all the products off multiplying the row and the col we looped through first
@@ -58,6 +64,16 @@ class Matrix():
     @staticmethod
     def static_mult(m, multiplier):
 
+        """
+        Multiplies every element in a matrix with a given multiplier
+        if the given multiplier is a matrix every element in the matrix
+        wil be multiplied with the corresponding element in the multiplier matrix
+
+        Otherwise every element will be multiplied by the given integer or float
+
+        This function returns a new matrix
+        """
+
         result = Matrix(m.rows, m.cols)
         if isinstance(multiplier, Matrix):
             result.values = [[m.values[r][c] * multiplier.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
@@ -67,6 +83,16 @@ class Matrix():
         return result
 
     def mult(self, multiplier):
+
+        """
+        Multiplies every element in the matrix with a given multiplier
+        if the given multiplier is a matrix every element in the matrix
+        wil be multiplied with the corresponding element in the multiplier matrix
+
+        Otherwise every element will be multiplied by the given integer or float
+
+        This function changes the matrix it is called on
+        """
 
         if isinstance(multiplier, Matrix):
             self.values = [[self.values[r][c] * multiplier.values[r][c] for c in range(self.cols)] for r in range(self.rows)]
@@ -79,6 +105,16 @@ class Matrix():
 
     @staticmethod
     def static_add(m, adder):
+
+        """
+        Adds every element in the matrix with a given adder
+        if the given adder is a matrix every element in the matrix
+        wil be added with the corresponding element in the adder matrix
+
+        Otherwise every element will be added by the given integer or float
+
+        This function returns a new matrix
+        """
 
         result = Matrix(m.rows, m.cols)
 
@@ -94,6 +130,16 @@ class Matrix():
 
     def add(self, adder):
 
+        """
+        Adds every element in the matrix with a given adder
+        if the given adder is a matrix every element in the matrix
+        wil be added with the corresponding element in the adder matrix
+
+        Otherwise every element will be added by the given integer or float
+
+        This function changes the matrix it is called on
+        """
+
         if isinstance(adder, Matrix):
             self.values = [[self.values[r][c] + adder.values[r][c] for c in range(self.cols)] for r in range(self.rows)]
         else:
@@ -104,6 +150,16 @@ class Matrix():
 
     @staticmethod
     def subtract(m, subtracter):
+
+        """
+        Subtracts every element in the matrix with a given subtracter
+        if the given subtracter is a matrix every element in the matrix
+        wil be subtractet with the corresponding element in the subtracter matrix
+
+        Otherwise every element will be subtractet by the given integer or float
+
+        This function changes the matrix it is called on
+        """
 
         result = Matrix(m.rows, m.cols)
 
@@ -121,6 +177,9 @@ class Matrix():
 
 
     def randomize(self):
+        """
+        Gives every element in the matrix a random value between -1 and 1
+        """
         self.values = [[round(random.uniform(-1,1),2) for c in r] for r in self.values]
 
 
@@ -184,6 +243,12 @@ class Matrix():
 
     @staticmethod
     def list_2_matrix(list):
+
+        """
+        Converts a given list into a matrix
+
+        This function returns a new matrix
+        """
 
         result = Matrix(len(list), 1)
 
