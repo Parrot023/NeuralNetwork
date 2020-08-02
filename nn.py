@@ -3,27 +3,49 @@ import matrix_math as mm
 import math
 import pickle
 import time
+from scipy.special import expit
 
 # Activation function
-def sigmoid(x):
-    print(x)
-    return 1 / (1 + math.exp(-x))
+# def sigmoid(x):
+#     """
+#     At the moment non working sigmoid function.
+#     Therefore the scipy expit function is used instead
+#     - Another sigmoid function
+#     """
+#
+#     print(x)
+#     return 1 / (1 + math.exp(-x))
+
 
 # Function to calculate gradient when doing gradient descent
 def dsigmoid(y):
+    """
+    Function used to calculate the gradient.
+    When doing gradient descent
+    """
     return y * (1 - y)
 
+# Using the expit sigmoid instead of my own
+sigmoid = expit
+
+
 # Translate function
-def translate(x):
+def translate(x, min1 = 0, max1 = 255, min2 = 0, max2 = 1):
+
+    """
+    Takes an integer in one range and translates it to another range
+    The defualt values translates an integer from a range between 0 and 255 to a range between 0 and 1
+    """
+
     # Figure out how 'wide' each range is
-    leftSpan = 256 - 0
-    rightSpan = 1 - 0
+    leftSpan = max1 - min1
+    rightSpan = max2 - min2
 
     # Convert the left range into a 0-1 range (float)
-    valueScaled = float(x - 0) / float(leftSpan)
+    valueScaled = float(x - min1) / float(leftSpan)
 
     # Convert the 0-1 range into a value in the right range.
-    return 0 + (valueScaled * rightSpan)
+    return min2 + (valueScaled * rightSpan)
 
 class NeuralNetwork():
     """
@@ -119,6 +141,7 @@ class NeuralNetwork():
                     self.biases[l].add(gradient)
 
                     self.weights[l].add(delta_w)
+
             except Exception as e:
                 print("error skipped training set", i)
                 print(e)
