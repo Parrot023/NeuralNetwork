@@ -3,6 +3,7 @@ import matrix_math as mm
 import math
 import pickle
 import time
+import random
 from scipy.special import expit
 
 # Activation function
@@ -35,6 +36,7 @@ def translate(x, min1 = 0, max1 = 255, min2 = 0, max2 = 1):
     """
     Takes an integer in one range and translates it to another range
     The defualt values translates an integer from a range between 0 and 255 to a range between 0 and 1
+    The default values comes from the mnist dataset
     """
 
     # Figure out how 'wide' each range is
@@ -46,6 +48,17 @@ def translate(x, min1 = 0, max1 = 255, min2 = 0, max2 = 1):
 
     # Convert the 0-1 range into a value in the right range.
     return min2 + (valueScaled * rightSpan)
+
+def mutation(x, mr = 0.1):
+
+    """
+    Function used by the networks function mutate, to mutate every element in a matrix
+    """
+
+    if random.uniform(0, 1) < mr:
+        x += random.uniform(-1, 1)
+
+    return x
 
 class NeuralNetwork():
     """
@@ -166,6 +179,16 @@ class NeuralNetwork():
 
 
         print("score: {}/{} ({})".format(correct, correct + wrong, correct/(correct+wrong)))
+
+    def mutate(self, mr = 0.1):
+
+        # Mutate should change every weight randomly
+        # Mutate every bias
+
+        for i in range(len(self.weights)):
+            # A mutation function is applied to every weight and bais
+            self.weights[i].map(mutation, mr = mr)
+            self.biases[i].map(mutation, mr = mr)
 
     # Function to save the model to a pickle file
     def save(self, name):
