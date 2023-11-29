@@ -26,6 +26,207 @@ class Matrix():
         #     for c in range(self.cols):
         #         r.append(1)
 
+    def mult(self, multiplier):
+
+        """
+        Multiplies every element in the matrix with a given multiplier
+        if the given multiplier is a matrix every element in the matrix
+        wil be multiplied with the corresponding element in the multiplier matrix
+
+        Otherwise every element will be multiplied by the given integer or float
+
+        This function changes the matrix it is called on
+        """
+
+        if isinstance(multiplier, Matrix):
+            self.values = [[self.values[r][c] * multiplier.values[r][c] for c in range(self.cols)] for r in range(self.rows)]
+        else:
+            self.values = [[c * multiplier for c in r] for r in self.values]
+
+        # for r in range(m.rows):
+        #     for c in range(m.cols):
+        #         self.matrix[r][c] *= multiplier
+
+    def add(self, adder):
+
+        """
+        Adds every element in the matrix with a given adder
+        if the given adder is a matrix every element in the matrix
+        wil be added with the corresponding element in the adder matrix
+
+        Otherwise every element will be added by the given integer or float
+
+        This function changes the matrix it is called on
+        """
+
+        if isinstance(adder, Matrix):
+            self.values = [[self.values[r][c] + adder.values[r][c] for c in range(self.cols)] for r in range(self.rows)]
+        else:
+            self.values = [[c + adder for c in r] for r in self.values]
+        # for r in range(m.rows):
+        #     for c in range(m.cols):
+        #         self.matrix[r][c] += adder
+
+    def randomize(self):
+        """
+        Gives every element in the matrix a random value between -1 and 1
+        """
+        self.values = [[round(random.uniform(-1,1),2) for c in r] for r in self.values]
+
+    def map(self, function, **kwargs):
+
+        """
+        Applies a function (f) to every element in the matrix
+        if the function needs more arguments than x (the element itself) they can be given to the map function (m) as kwargs
+        the map function (m) will then pass the kwargs on to the function (f)
+
+        This function changes the matrix it is called on
+        """
+
+        self.values = [[function(c, **kwargs) for c in r] for r in self.values]
+
+        # for r in range(self.rows):
+        #     for c in range(self.cols):
+        #         self.values[r][c] = function(c)
+
+    def pretty_print(self):
+
+        """
+        Function to print the matrix like a table
+        """
+
+        for r in self.values:
+            print(r)
+        print("")
+
+    @staticmethod
+    def list_2_matrix(list):
+
+        """
+        Converts a given list into a matrix
+
+        This function returns a new matrix
+        """
+
+        result = Matrix(len(list), 1)
+
+        for i in range(len(list)):
+            result.values[i][0] = list[i]
+
+        return result
+    
+    @staticmethod
+    def static_map(m, function, **kwargs):
+
+        """
+        Applies a function (f) to every element in the matrix
+        if the function needs more arguments than x (the element itself) they can be given to the map function (m) as kwargs
+        the map function (m) will then pass the kwargs on to the function (f)
+
+        This function returns a new matrix
+        """
+
+        result = Matrix(m.rows, m.cols)
+
+        result.values = [[function(c, **kwargs) for c in r] for r in m.values]
+
+        return result
+    
+    @staticmethod
+    def transpose(m):
+        """
+        Function to turn the matrix every row becomes a col and every col becomes a row
+        Running the function twice will turn the matrix back to its original dimensions
+        """
+
+        result = Matrix(m.cols, m.rows)
+
+        result.values = [[m.values[r][c] for r in range(m.rows)] for c in range(m.cols)]
+        # The orientation can be changed by changing whether we loop through the cols or rows first look below
+        # ---------------------------------------------------------------------------------------------------
+        # self.values = [[m.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
+        # ----------------------------------------------------------------------------------------------------
+
+        # m.rotated = []
+        # for c in range(self.cols):
+        #     m.rotated.append([])
+        #     for r in range(self.rows):
+        #         m.rotated[c].append(self.values[r][c])
+        # result.values = m.rotated
+
+        return result
+    
+    @staticmethod
+    def subtract(m, subtracter):
+
+        """
+        Subtracts every element in the matrix with a given subtracter
+        if the given subtracter is a matrix every element in the matrix
+        wil be subtractet with the corresponding element in the subtracter matrix
+
+        Otherwise every element will be subtractet by the given integer or float
+
+        This function changes the matrix it is called on
+        """
+
+        result = Matrix(m.rows, m.cols)
+
+        if isinstance(subtracter, Matrix):
+            result.values = [[m.values[r][c] - subtracter.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
+        else:
+            result.values = [[c - subtracter for c in r] for r in m.values]
+
+        return result
+        # for r in range(m.rows):
+        #     for c in range(m.cols):
+        #         self.matrix[r][c] += adder
+
+    @staticmethod
+    def static_add(m, adder):
+
+        """
+        Adds every element in the matrix with a given adder
+        if the given adder is a matrix every element in the matrix
+        wil be added with the corresponding element in the adder matrix
+
+        Otherwise every element will be added by the given integer or float
+
+        This function returns a new matrix
+        """
+
+        result = Matrix(m.rows, m.cols)
+
+        if isinstance(adder, Matrix):
+            result.values = [[m.values[r][c] + adder.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
+        else:
+            result.values = [[c + adder for c in r] for r in m.values]
+
+        return result
+        # for r in range(m.rows):
+        #     for c in range(m.cols):
+        #         self.matrix[r][c] += adder
+
+    @staticmethod
+    def static_mult(m, multiplier):
+
+        """
+        Multiplies every element in a matrix with a given multiplier
+        if the given multiplier is a matrix every element in the matrix
+        wil be multiplied with the corresponding element in the multiplier matrix
+
+        Otherwise every element will be multiplied by the given integer or float
+
+        This function returns a new matrix
+        """
+
+        result = Matrix(m.rows, m.cols)
+        if isinstance(multiplier, Matrix):
+            result.values = [[m.values[r][c] * multiplier.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
+        else:
+            result.values = [[c * multiplier for c in r] for r in m.values]
+
+        return result
+    
     @staticmethod
     def dot_product(m1, m2):
 
@@ -61,249 +262,4 @@ class Matrix():
 
         return result
 
-    @staticmethod
-    def static_mult(m, multiplier):
 
-        """
-        Multiplies every element in a matrix with a given multiplier
-        if the given multiplier is a matrix every element in the matrix
-        wil be multiplied with the corresponding element in the multiplier matrix
-
-        Otherwise every element will be multiplied by the given integer or float
-
-        This function returns a new matrix
-        """
-
-        result = Matrix(m.rows, m.cols)
-        if isinstance(multiplier, Matrix):
-            result.values = [[m.values[r][c] * multiplier.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
-        else:
-            result.values = [[c * multiplier for c in r] for r in m.values]
-
-        return result
-
-    def mult(self, multiplier):
-
-        """
-        Multiplies every element in the matrix with a given multiplier
-        if the given multiplier is a matrix every element in the matrix
-        wil be multiplied with the corresponding element in the multiplier matrix
-
-        Otherwise every element will be multiplied by the given integer or float
-
-        This function changes the matrix it is called on
-        """
-
-        if isinstance(multiplier, Matrix):
-            self.values = [[self.values[r][c] * multiplier.values[r][c] for c in range(self.cols)] for r in range(self.rows)]
-        else:
-            self.values = [[c * multiplier for c in r] for r in self.values]
-
-        # for r in range(m.rows):
-        #     for c in range(m.cols):
-        #         self.matrix[r][c] *= multiplier
-
-    @staticmethod
-    def static_add(m, adder):
-
-        """
-        Adds every element in the matrix with a given adder
-        if the given adder is a matrix every element in the matrix
-        wil be added with the corresponding element in the adder matrix
-
-        Otherwise every element will be added by the given integer or float
-
-        This function returns a new matrix
-        """
-
-        result = Matrix(m.rows, m.cols)
-
-        if isinstance(adder, Matrix):
-            result.values = [[m.values[r][c] + adder.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
-        else:
-            result.values = [[c + adder for c in r] for r in m.values]
-
-        return result
-        # for r in range(m.rows):
-        #     for c in range(m.cols):
-        #         self.matrix[r][c] += adder
-
-    def add(self, adder):
-
-        """
-        Adds every element in the matrix with a given adder
-        if the given adder is a matrix every element in the matrix
-        wil be added with the corresponding element in the adder matrix
-
-        Otherwise every element will be added by the given integer or float
-
-        This function changes the matrix it is called on
-        """
-
-        if isinstance(adder, Matrix):
-            self.values = [[self.values[r][c] + adder.values[r][c] for c in range(self.cols)] for r in range(self.rows)]
-        else:
-            self.values = [[c + adder for c in r] for r in self.values]
-        # for r in range(m.rows):
-        #     for c in range(m.cols):
-        #         self.matrix[r][c] += adder
-
-    @staticmethod
-    def subtract(m, subtracter):
-
-        """
-        Subtracts every element in the matrix with a given subtracter
-        if the given subtracter is a matrix every element in the matrix
-        wil be subtractet with the corresponding element in the subtracter matrix
-
-        Otherwise every element will be subtractet by the given integer or float
-
-        This function changes the matrix it is called on
-        """
-
-        result = Matrix(m.rows, m.cols)
-
-        if isinstance(subtracter, Matrix):
-            result.values = [[m.values[r][c] - subtracter.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
-        else:
-            result.values = [[c - subtracter for c in r] for r in m.values]
-
-        return result
-        # for r in range(m.rows):
-        #     for c in range(m.cols):
-        #         self.matrix[r][c] += adder
-
-    # -----------------------------------------------------------------------------------------------------------------------------
-
-
-    def randomize(self):
-        """
-        Gives every element in the matrix a random value between -1 and 1
-        """
-        self.values = [[round(random.uniform(-1,1),2) for c in r] for r in self.values]
-
-
-
-    @staticmethod
-    def transpose(m):
-        """
-        Function to turn the matrix every row becomes a col and every col becomes a row
-        Running the function twice will turn the matrix back to its original dimensions
-        """
-
-        result = Matrix(m.cols, m.rows)
-
-        result.values = [[m.values[r][c] for r in range(m.rows)] for c in range(m.cols)]
-        # The orientation can be changed by changing whether we loop through the cols or rows first look below
-        # ---------------------------------------------------------------------------------------------------
-        # self.values = [[m.values[r][c] for c in range(m.cols)] for r in range(m.rows)]
-        # ----------------------------------------------------------------------------------------------------
-
-        # m.rotated = []
-        # for c in range(self.cols):
-        #     m.rotated.append([])
-        #     for r in range(self.rows):
-        #         m.rotated[c].append(self.values[r][c])
-        # result.values = m.rotated
-
-        return result
-
-    def map(self, function, **kwargs):
-
-        """
-        Applies a function (f) to every element in the matrix
-        if the function needs more arguments than x (the element itself) they can be given to the map function (m) as kwargs
-        the map function (m) will then pass the kwargs on to the function (f)
-
-        This function changes the matrix it is called on
-        """
-
-        self.values = [[function(c, **kwargs) for c in r] for r in self.values]
-
-        # for r in range(self.rows):
-        #     for c in range(self.cols):
-        #         self.values[r][c] = function(c)
-
-    @staticmethod
-    def static_map(m, function, **kwargs):
-
-        """
-        Applies a function (f) to every element in the matrix
-        if the function needs more arguments than x (the element itself) they can be given to the map function (m) as kwargs
-        the map function (m) will then pass the kwargs on to the function (f)
-
-        This function returns a new matrix
-        """
-
-        result = Matrix(m.rows, m.cols)
-
-        result.values = [[function(c, **kwargs) for c in r] for r in m.values]
-
-        return result
-
-    @staticmethod
-    def list_2_matrix(list):
-
-        """
-        Converts a given list into a matrix
-
-        This function returns a new matrix
-        """
-
-        result = Matrix(len(list), 1)
-
-        for i in range(len(list)):
-            result.values[i][0] = list[i]
-
-        return result
-
-    def pretty_print(self):
-
-        """
-        Function to print the matrix like a table
-        """
-
-        for r in self.values:
-            print(r)
-        print("")
-
-# Function to test Matrix map function
-# def mult3(n):
-#
-#     return n * 3
-
-
-# Testing all function
-# m = Matrix(3,1)
-# m2 = Matrix(2,3)
-# #
-# m.randomize()
-# m2.randomize()
-# #
-# m.pretty_print()
-# m2.pretty_print()
-#
-# m3 = Matrix.dot_product(m2,m)
-# m3.pretty_print()
-
-#
-# m.map(mult3)
-# m.pretty_print()
-
-#
-# m3 = Matrix.mult(m, m2)
-# m3.pretty_print()
-# m3 = Matrix.add(m, m2)
-# m3.pretty_print()
-#
-# m = Matrix(3,2)
-# m2 = Matrix(2,3)
-# m.randomize()
-# m2.randomize()
-#
-# m3 = Matrix.dot_product(m, m2)
-# m3.pretty_print()
-
-# print("dot product")
-# print(m.dot_product(m2).values)
-# print(m.values)
