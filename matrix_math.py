@@ -69,9 +69,9 @@ class Matrix():
 
     def randomize(self):
         """
-        Gives every element in the matrix a random value between -1 and 1
+        Gives every element in the matrix a random value between 0 and 1
         """
-        self.values = [[round(random.uniform(-1,1),2) for c in r] for r in self.values]
+        self.values = [[round(random.uniform(0,1),2) for c in r] for r in self.values]
 
     def map(self, function, **kwargs):
 
