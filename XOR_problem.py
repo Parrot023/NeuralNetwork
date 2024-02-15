@@ -6,12 +6,11 @@ An XOR function should return a true value if the two inputs are not equal
 and a false value if they are equal
 """
 
-import nn
+import NeuralNetwork_simple as nn
 import matrix_math as mm
 import random
-from mnist import MNIST
 
-n = nn.NeuralNetwork([2,4,1])
+n = nn.NeuralNetwork(2,4,1)
 
 # XOR PROBLEM DATA
 inputs = [
@@ -34,7 +33,7 @@ t_inputs = []
 t_labels = []
 
 # Creates training data with a given number of randomized inputs and labels
-for i in range(20000):
+for i in range(40000):
     index = random.randint(0,3)
     t_inputs.append(inputs[index])
     t_labels.append(labels[index])
@@ -44,13 +43,13 @@ n.train(t_inputs, t_labels)
 
 # Trying all inputs to verify the result
 for i in inputs:
-    result, data = n.feed_forward(i)
+    h, o = n.feed_forward(i)
 
     print("INPUT:")
     i.pretty_print()
 
     print("OUPUT:")
-    result.pretty_print()
+    o.pretty_print()
 
 
 # Saving the network as XOR_model (Dont write a filetype - the filetype is handled by the library)

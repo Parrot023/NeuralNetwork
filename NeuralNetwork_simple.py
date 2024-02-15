@@ -5,23 +5,22 @@ import pickle
 import time
 import random
 
-
-# Activation function
 def sigmoid(x):
     """
-    Et eller andet er galt med den her funktion
+    Aktiveringsfunktion
+    Et eller andet er galt med den her funktion (måske)
     """
 
     return 1 / (1 + math.exp(-x))
 
 
-# Function to calculate gradient when doing gradient descent
 def dsigmoid(y):
     """
-    Function used to calculate the gradient.
-    When doing gradient descent
+    Den differentierede sigmoid funktion
     """
+
     return y * (1 - y)
+
 
 class NeuralNetwork():
     """
@@ -68,8 +67,13 @@ class NeuralNetwork():
         ## det input der kommer fra input laget. Dette er nu værdierne i det skjulte lag
         self.hidden_layer_values = mm.Matrix.dot_product(self.hidden_layer_weights, input)
 
+        self.hidden_layer_values.pretty_print()
+
         # Værdiene i det sjulte lag føres nu igennem aktiveringsfunktionen
         self.hidden_layer_values.map(sigmoid)
+
+        self.hidden_layer_values.pretty_print()
+
 
         # Her tages prikproduktet af vægtenen mellem det sjulte lag og output laget og 
         ## det input der kommer fra det skjulte lag laget. Dette er nu værdierne i det skjulte lag
@@ -80,4 +84,73 @@ class NeuralNetwork():
         self.output_layer_values.map(sigmoid)
 
         # Output laget returneres
-        return self.output_layer_values
+        return self.hidden_layer_values, self.output_layer_values
+
+    def train(self, inputs, labels, learning_rate=-0.1):
+
+        for i in range(len(inputs)):
+
+            # Looper gennem alle inputs
+
+            hidden_layer_values, output_layer_values = self.feed_forward(inputs[i])
+
+            # ------------------------------------------------------------->
+
+            # Ouput lagets fejlmatrice
+            oe = mm.Matrix.subtract(output_layer_values, labels[i])
+
+            print("OE")
+            oe.pretty_print()
+
+            gradient = mm.Matrix.static_map(output_layer_values, dsigmoid)
+            gradient.mult(oe)
+            gradient.mult(learning_rate)
+            
+            delta_output_layer_weights = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(hidden_layer_values))
+
+            # ------------------------------------------------------------->
+
+            # Det skjulte lags fejlmatrice
+            
+            print("O WEIGHTS TRANSPOSED")
+            mm.Matrix.transpose(self.output_layer_weights).pretty_print()
+
+            he = mm.Matrix.dot_product(mm.Matrix.transpose(self.output_layer_weights), oe)
+
+
+            gradient = mm.Matrix.static_map(hidden_layer_values, dsigmoid)
+            gradient.mult(he)
+            gradient.mult(learning_rate)
+            
+            delta_hidden_layer_weights = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(inputs[i]))
+
+            # -------------------------------------------------------------->
+
+            self.output_layer_weights.add(delta_output_layer_weights)
+            self.hidden_layer_weights.add(delta_hidden_layer_weights)
+
+
+    def save(self, name):
+
+        """
+        Saves the neural network to a pickle file
+        """
+
+        with open(str(name) + ".pickle", 'wb') as file:
+            pickle.dump(self, file)
+
+    @staticmethod
+    def load(name):
+
+        """
+        Static method to load in model and return it
+        A static method is called like NeuralNetwork.load(name) (Called on class name)
+        Instead of nn.load(name) (Called on instance like most other methods)
+        """
+
+        with open(str(name) + ".pickle", 'rb') as file:
+            return pickle.load(file)
+
+
+
+
