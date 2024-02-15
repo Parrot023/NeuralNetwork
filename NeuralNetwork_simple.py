@@ -2,8 +2,8 @@
 import matrix_math as mm
 import math
 import pickle
-import time
-import random
+#import time
+#import random
 
 def sigmoid(x):
     """
@@ -67,12 +67,12 @@ class NeuralNetwork():
         ## det input der kommer fra input laget. Dette er nu værdierne i det skjulte lag
         self.hidden_layer_values = mm.Matrix.dot_product(self.hidden_layer_weights, input)
 
-        self.hidden_layer_values.pretty_print()
+        #self.hidden_layer_values.pretty_print()
 
         # Værdiene i det sjulte lag føres nu igennem aktiveringsfunktionen
         self.hidden_layer_values.map(sigmoid)
 
-        self.hidden_layer_values.pretty_print()
+        #self.hidden_layer_values.pretty_print()
 
 
         # Her tages prikproduktet af vægtenen mellem det sjulte lag og output laget og 
@@ -88,9 +88,15 @@ class NeuralNetwork():
 
     def train(self, inputs, labels, learning_rate=-0.1):
 
+        """
+        Funktionen train looper igennem de givne inputs og beregne ved hjælp af gradient descent
+        hvordan de enkelte vægte skal ændres for at minimere cost funktionen
+        """
+
         for i in range(len(inputs)):
 
-            # Looper gennem alle inputs
+            # Lidt information om træningens fremgang
+            print("TRÆNER: {}%".format(int(i/len(inputs) * 100)))
 
             hidden_layer_values, output_layer_values = self.feed_forward(inputs[i])
 
@@ -99,33 +105,29 @@ class NeuralNetwork():
             # Ouput lagets fejlmatrice
             oe = mm.Matrix.subtract(output_layer_values, labels[i])
 
-            print("OE")
-            oe.pretty_print()
-
             gradient = mm.Matrix.static_map(output_layer_values, dsigmoid)
             gradient.mult(oe)
             gradient.mult(learning_rate)
             
+            # Ændrings matricets for vægtene mellem det skjulte lag og output laget
             delta_output_layer_weights = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(hidden_layer_values))
 
             # ------------------------------------------------------------->
 
             # Det skjulte lags fejlmatrice
-            
-            print("O WEIGHTS TRANSPOSED")
-            mm.Matrix.transpose(self.output_layer_weights).pretty_print()
-
             he = mm.Matrix.dot_product(mm.Matrix.transpose(self.output_layer_weights), oe)
 
 
             gradient = mm.Matrix.static_map(hidden_layer_values, dsigmoid)
             gradient.mult(he)
             gradient.mult(learning_rate)
-            
+          
+            # Ændrings matricets for vægtene mellem input laget og det skjulte lag  
             delta_hidden_layer_weights = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(inputs[i]))
 
             # -------------------------------------------------------------->
 
+            # Vægtene ændres
             self.output_layer_weights.add(delta_output_layer_weights)
             self.hidden_layer_weights.add(delta_hidden_layer_weights)
 

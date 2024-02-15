@@ -10,7 +10,7 @@ import NeuralNetwork_simple as nn
 import matrix_math as mm
 import random
 
-n = nn.NeuralNetwork(2,4,1)
+n = nn.NeuralNetwork(2,8,1)
 
 # XOR PROBLEM DATA
 inputs = [
@@ -48,7 +48,7 @@ for i in inputs:
     print("INPUT:")
     i.pretty_print()
 
-    print("OUPUT:")
+    print("OUTPUT:")
     o.pretty_print()
 
 
