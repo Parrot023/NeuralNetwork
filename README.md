@@ -13,3 +13,14 @@ Selvom pointen med dette projekt er at bygge et neuralt netværk op fra bunden k
 et par eksterne biblioteker. Disse kan ses i filen requirements.txt og de kan installers således:
 
 `pip install -r requirements.txt`
+
+### Erfaringer
+
+* Learning_rate skal være negativ da dette resultere i den negative gradient
+* Vægtenes tilfældige startværdier kan ikke afrundes til 2 decimaler.
+* Labels og startværdier skal initialiseres korrekt. Se seneste comit
+
+## Log
+
+### 6 Marts 2024
+Efter utalige mislykkedes træninger er det lykkedes at træne et netværk med en succes rate på 86%
