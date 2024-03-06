@@ -49,9 +49,13 @@ class NeuralNetwork():
         self.hidden_layer_weights.randomize()
         self.output_layer_weights.randomize()
 
+        self.number_of_output_nodes = number_of_output_nodes
+        self.number_of_hidden_nodes = number_of_hidden_nodes
+
+
         # Learning rate eller læringsraten benyttes til at bestemme størrelse af de
         # skridt det tages under gradient descent når netværket trænes
-        self.lr = 0.1
+        self.lr = -0.1
 
     def feed_forward(self, input):
 
@@ -67,12 +71,12 @@ class NeuralNetwork():
         ## det input der kommer fra input laget. Dette er nu værdierne i det skjulte lag
         self.hidden_layer_values = mm.Matrix.dot_product(self.hidden_layer_weights, input)
 
-        #self.hidden_layer_values.pretty_print()
+        # self.hidden_layer_values.pretty_print()
 
         # Værdiene i det sjulte lag føres nu igennem aktiveringsfunktionen
         self.hidden_layer_values.map(sigmoid)
 
-        #self.hidden_layer_values.pretty_print()
+        # self.hidden_layer_values.pretty_print()
 
 
         # Her tages prikproduktet af vægtenen mellem det sjulte lag og output laget og 
@@ -86,28 +90,32 @@ class NeuralNetwork():
         # Output laget returneres
         return self.hidden_layer_values, self.output_layer_values
 
-    def train(self, inputs, labels, learning_rate=-0.1):
+    def train(self, inputs, labels, epochs = 5):
 
         """
         Funktionen train looper igennem de givne inputs og beregne ved hjælp af gradient descent
         hvordan de enkelte vægte skal ændres for at minimere cost funktionen
         """
-
+      
         for i in range(len(inputs)):
 
             # Lidt information om træningens fremgang
-            print("TRÆNER: {}%".format(int(i/len(inputs) * 100)))
+            if (i % 6000 == 0): print("TRÆNER: {}%".format(float(i/len(inputs) * 100)))
 
             hidden_layer_values, output_layer_values = self.feed_forward(inputs[i])
+
+            # output_layer_values.pretty_print()
 
             # ------------------------------------------------------------->
 
             # Ouput lagets fejlmatrice
             oe = mm.Matrix.subtract(output_layer_values, labels[i])
 
+            oe.pretty_print()
+
             gradient = mm.Matrix.static_map(output_layer_values, dsigmoid)
             gradient.mult(oe)
-            gradient.mult(learning_rate)
+            gradient.mult(self.lr)
             
             # Ændrings matricets for vægtene mellem det skjulte lag og output laget
             delta_output_layer_weights = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(hidden_layer_values))
@@ -120,8 +128,8 @@ class NeuralNetwork():
 
             gradient = mm.Matrix.static_map(hidden_layer_values, dsigmoid)
             gradient.mult(he)
-            gradient.mult(learning_rate)
-          
+            gradient.mult(self.lr)
+        
             # Ændrings matricets for vægtene mellem input laget og det skjulte lag  
             delta_hidden_layer_weights = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(inputs[i]))
 
@@ -130,6 +138,9 @@ class NeuralNetwork():
             # Vægtene ændres
             self.output_layer_weights.add(delta_output_layer_weights)
             self.hidden_layer_weights.add(delta_hidden_layer_weights)
+        
+        print("Label {}".format(i))
+        labels[i].pretty_print()
 
 
     def save(self, name):
@@ -138,8 +149,11 @@ class NeuralNetwork():
         Saves the neural network to a pickle file
         """
 
-        with open(str(name) + ".pickle", 'wb') as file:
-            pickle.dump(self, file)
+        file = open(str(name) + ".pickle", 'wb')
+        
+        pickle.dump(self, file)
+
+        file.close()
 
     @staticmethod
     def load(name):
@@ -150,8 +164,13 @@ class NeuralNetwork():
         Instead of nn.load(name) (Called on instance like most other methods)
         """
 
-        with open(str(name) + ".pickle", 'rb') as file:
-            return pickle.load(file)
+        file = open(str(name) + ".pickle", 'rb')
+        
+        nn = pickle.load(file)
+
+        file.close()
+
+        return nn
 
 
 

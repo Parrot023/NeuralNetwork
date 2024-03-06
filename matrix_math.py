@@ -71,7 +71,7 @@ class Matrix():
         """
         Gives every element in the matrix a random value between 0 and 1
         """
-        self.values = [[round(random.uniform(0,1),2) for c in r] for r in self.values]
+        self.values = [[random.uniform(0,1) - 0.5 for c in r] for r in self.values]
 
     def map(self, function, **kwargs):
 
@@ -98,6 +98,23 @@ class Matrix():
         for r in self.values:
             print(r)
         print("")
+
+    def index_of_max_value(self):
+
+        if not self.cols == 1:
+            return
+
+        max_value = 0
+        index = 0
+
+        for i in range(self.rows-1):
+
+            if self.values[i][0] > max_value:
+                max_value = self.values[i][0]
+                index = i
+
+        return index
+
 
     @staticmethod
     def list_2_matrix(list):
