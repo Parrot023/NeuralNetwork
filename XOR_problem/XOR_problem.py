@@ -33,7 +33,7 @@ t_inputs = []
 t_labels = []
 
 # Creates training data with a given number of randomized inputs and labels
-for i in range(40000):
+for i in range(20000):
     index = random.randint(0,3)
     t_inputs.append(inputs[index])
     t_labels.append(labels[index])
