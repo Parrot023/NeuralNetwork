@@ -1,8 +1,8 @@
-import matrix_math as mm
+import MatrixMath as mm
 
 def read_mnist(filename):
 
-    print("Læser mnist data")
+    print("Læser MNIST data")
 
     # Åbner filen med data
     data_file = open(filename, 'r')
@@ -17,7 +17,7 @@ def read_mnist(filename):
     labels = []
 
     #Looper gennem alle dataene
-    for i in range(len(data_list[0:30000])):
+    for i in range(len(data_list)):
 
         # Den første del af data'ene er inputtets label. Denne skal ikke bruges til at kreere inputtet
         data = data_list[i][2:len(data_list[i]) - 1].split(',')
@@ -41,6 +41,9 @@ def read_mnist(filename):
         inputs.append(input)
         labels.append(label)
 
-    print("Færdiggjorde læsning af mnist data")
+        # Information om fremskridt
+        if (i % (len(data_list)/20) == 0):
+            print("{}%".format(int(i/len(data_list)*100)))
 
+    print("Færdiggjorde læsning af MNIST data")
     return inputs, labels

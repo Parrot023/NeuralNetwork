@@ -1,9 +1,6 @@
-
-import matrix_math as mm
+import MatrixMath as mm
 import math
 import pickle
-#import time
-#import random
 
 def sigmoid(x):
     """
@@ -24,8 +21,15 @@ def dsigmoid(y):
 
 class NeuralNetwork():
     """
-    This class contains all data and functions to make and use a fully connected neural network
-    The network can be configured with any number of layers and any number of nodes per layer
+    Dette klasse indeholder alle data og funktioner som er nødvændige for at skabe og benytte
+    et fuldt forbundet neuralt netværk. Netværket kan konfigures med et valgfrit antal noder
+    i alle lag. Netværket er dog begrænset af altid at bestå af 3 lag. 
+    
+    Netværkets struktur:
+
+    Input lag
+    Skjult lag
+    Output lag
     """
 
     def __init__(self, number_of_input_nodes, number_of_hidden_nodes, number_of_output_nodes):
@@ -60,8 +64,8 @@ class NeuralNetwork():
     def feed_forward(self, input):
 
         """
-        This function feeds the inputs through the neural network and returns the final output
-        Denne funktion fører et input gennem netværket og returnere et output matrix
+        Denne funktion fører et input gennem netværket og returnere et matrix for værdierne
+        i det skjulte lagt og et output matrix
 
         Parametre: funktionen feed_forward tager en parameter.
         input: Et n*1 matrix som indeholder de værdier der ønsker ført ind i netværket.
@@ -71,13 +75,8 @@ class NeuralNetwork():
         ## det input der kommer fra input laget. Dette er nu værdierne i det skjulte lag
         self.hidden_layer_values = mm.Matrix.dot_product(self.hidden_layer_weights, input)
 
-        # self.hidden_layer_values.pretty_print()
-
         # Værdiene i det sjulte lag føres nu igennem aktiveringsfunktionen
         self.hidden_layer_values.map(sigmoid)
-
-        # self.hidden_layer_values.pretty_print()
-
 
         # Her tages prikproduktet af vægtenen mellem det sjulte lag og output laget og 
         ## det input der kommer fra det skjulte lag laget. Dette er nu værdierne i det skjulte lag
@@ -90,7 +89,7 @@ class NeuralNetwork():
         # Output laget returneres
         return self.hidden_layer_values, self.output_layer_values
 
-    def train(self, inputs, labels, epochs = 5):
+    def train(self, inputs, labels):
 
         """
         Funktionen train looper igennem de givne inputs og beregne ved hjælp af gradient descent
@@ -100,24 +99,21 @@ class NeuralNetwork():
         for i in range(len(inputs)):
 
             # Lidt information om træningens fremgang
-            if (i % 6000 == 0): print("TRÆNER: {}%".format(float(i/len(inputs) * 100)))
+            if (i % (len(inputs)/20) == 0): 
+                print("Status: {}% af nuværende epoch ".format(int(i/len(inputs) * 100)))
 
             hidden_layer_values, output_layer_values = self.feed_forward(inputs[i])
-
-            # output_layer_values.pretty_print()
 
             # ------------------------------------------------------------->
 
             # Ouput lagets fejlmatrice
             oe = mm.Matrix.subtract(output_layer_values, labels[i])
 
-            oe.pretty_print()
-
             gradient = mm.Matrix.static_map(output_layer_values, dsigmoid)
             gradient.mult(oe)
             gradient.mult(self.lr)
             
-            # Ændrings matricets for vægtene mellem det skjulte lag og output laget
+            # Ændrings matricet for vægtene mellem det skjulte lag og output laget
             delta_output_layer_weights = mm.Matrix.dot_product(gradient, mm.Matrix.transpose(hidden_layer_values))
 
             # ------------------------------------------------------------->
@@ -138,15 +134,11 @@ class NeuralNetwork():
             # Vægtene ændres
             self.output_layer_weights.add(delta_output_layer_weights)
             self.hidden_layer_weights.add(delta_hidden_layer_weights)
-        
-        print("Label {}".format(i))
-        labels[i].pretty_print()
-
 
     def save(self, name):
 
         """
-        Saves the neural network to a pickle file
+        Gemmer neværket som funktionen kaldes på i en pickle fil
         """
 
         file = open(str(name) + ".pickle", 'wb')
@@ -159,9 +151,9 @@ class NeuralNetwork():
     def load(name):
 
         """
-        Static method to load in model and return it
-        A static method is called like NeuralNetwork.load(name) (Called on class name)
-        Instead of nn.load(name) (Called on instance like most other methods)
+        En statisk funktion som indlæser et allerede eksisterende netværk
+        og returnere det. Funktionen kaldes således
+        NeuralNetwork.load(filnavn)
         """
 
         file = open(str(name) + ".pickle", 'rb')
